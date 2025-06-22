@@ -1,31 +1,21 @@
-const express = require("express"); // initialize express package
-const app = express(); // get all properties & methods of express
-let PORT = 5000;
-
-// route
-
-app.get("/", (req, res) => {
-    res.send("Email Sending using nodejs");
-});
-
-// define controller 
+const express = require("express");
+const app = express();
+require('dotenv').config();
 
 const sendMail = require('./app/controller/emailSendController');
 
-// Email sending route
+app.get("/", sendMail);
 
-app.get("/send-email", sendMail); // sendMail is controller name
+const PORT = process.env.PORT || 3000;
 
-// listen the req in port 5000
-const Start = async() => {
-      try{
-             app.listen(PORT, () => {
-                  console.log('Server is running on port - '+PORT);
-             });
-      }
-      catch(err){
-                console.log(err);
-      }
-}
+const Start = async () => {
+    try {
+        app.listen(PORT, () => {
+            console.log(`🚀 Server is running on http://localhost:${PORT}`);
+        });
+    } catch (err) {
+        console.error("Error starting server:", err);
+    }
+};
 
 Start();

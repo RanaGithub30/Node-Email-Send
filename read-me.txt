@@ -1,6 +1,0 @@
-1) initialize npm by --> npm init
-2) install dependencies like - nodemon, express, nodemailer (for email sending) --> npm i express nodemon nodemailer
-
-3) to send mail go to etherial account & create a etherial account from --> https://ethereal.email/create
-4) get code for email sending from --> https://nodemailer.com/about/ 
-5) Ethereal mail is just for testing purpose, we can use gmail, mailtrup, mailgun or other smtp mail for real mail sending

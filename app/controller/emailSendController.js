@@ -1,35 +1,41 @@
 const nodemailer = require("nodemailer");
+require('dotenv').config();
 
-const sendMail = async(req, res) => {
+const sendMail = async (req, res) => {
+    try {
+        // Create reusable transporter object using SMTP
+        let transporter = nodemailer.createTransport({
+            host: 'smtp.ethereal.email',
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
 
-    // Only needed if you don't have a real mail account for testing
-    let testAccount = await nodemailer.createTestAccount();
+        // Mail options
+        let info = await transporter.sendMail({
+            from: `"Rana Saha 👻" <${process.env.EMAIL_USER}>`,
+            to: "abcd@gmail.com, xyz@gmail.com",
+            subject: "Node.js Email Test",
+            text: "Hello! This is a test email.",
+            html: "<b>This is a test email from a Node.js tutorial</b>",
+        });
 
-    // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email', // ethereal mail is just used for testing purpose
-        port: 587,
-        auth: {
-            user: 'mina.kshlerin89@ethereal.email',
-            pass: 'abffrpynHPC8RGarFW'
-        }
-    });
+        console.log("Message sent: %s", info.messageId);
 
-    // send mail with defined transport object
-    let info = await transporter.sendMail({
-        from: '"Rana Saha 👻" <mina.kshlerin89@ethereal.email>', // sender address
-        to: "abcd@gmail.com, xyz@gmail.com", // list of receivers
-        subject: "Node JS Email Send", // Subject line
-        text: "Testing Email", // plain text body
-        html: "<b>Tes Email from Node js Tutorial</b>", // html body
-    });
+        res.status(200).json({
+            success: true,
+            message: "Email sent successfully",
+            messageId: info.messageId,
+            previewURL: nodemailer.getTestMessageUrl(info) // Only for test accounts
+        });
 
-
-    console.log("Message sent: %s", info.messageId);
-    // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-    // get the information of mail sending in json
-      res.json(info);
+    } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).json({ success: false, message: "Failed to send email", error });
+    }
 };
 
 module.exports = sendMail;
